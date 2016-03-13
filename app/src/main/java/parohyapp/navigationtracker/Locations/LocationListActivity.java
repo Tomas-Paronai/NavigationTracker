@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,14 +35,17 @@ public class LocationListActivity extends AppCompatActivity {
     private boolean mTwoPane;
 
     private ContentBuilder cBuilder;
+    private int beaconId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
 
+        Intent intent = getIntent();
+        beaconId = intent.getIntExtra("beaconId", 0);
+
         setupToolbar();
-        //TODO: remove fab from layout
 
         cBuilder = ContentBuilder.getInstance();
 
@@ -70,7 +71,7 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(cBuilder.getItems(5)));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(cBuilder.getItems(beaconId)));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -92,7 +93,7 @@ public class LocationListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText("Location " + mValues.get(position).id);
+            holder.mIdView.setText("Location " + mValues.get(position).id); //TODO: fix this
             holder.mContentView.setText(mValues.get(position).content);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

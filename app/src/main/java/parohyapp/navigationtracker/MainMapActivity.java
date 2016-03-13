@@ -1,6 +1,7 @@
 package parohyapp.navigationtracker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import parohyapp.navigationtracker.Locations.LocationListActivity;
 import parohyapp.navigationtracker.fragments.Settings;
 import parohyapp.navigationtracker.handler.localization.DeviceLocationListener;
 import parohyapp.navigationtracker.handler.localization.PositionListener;
@@ -121,6 +123,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     /*DEBUG BUTTON*/
     public void myClick(View v){
-
+        Intent intent = new Intent(this, LocationListActivity.class);
+        intent.putExtra("beaconId", 5);
+        startActivity(intent);
     }
 }
