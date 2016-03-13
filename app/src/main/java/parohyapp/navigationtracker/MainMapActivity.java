@@ -55,7 +55,9 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         markerHandler = new MarkerHandler(googleMap);
 
         Location myLocation = getDeviceLocation();
-        updateMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
+        if (myLocation != null) {
+            updateMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
+        }
 
         if(myCords != null){
             if(myMarker!=null){
@@ -66,11 +68,13 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
             myMarker = markerHandler.addMarker(myCords,"You");
             mMap.moveCamera(CameraUpdateFactory.zoomTo(13.5f));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCords));
+
+            //testing dummy
+            MarkerBLE marker1 = new MarkerBLE(new LatLng(myCords.latitude+1,myCords.longitude+1),1,"Marker1");
+            markerHandler.addMarkerBLE(marker1);
         }
 
-        //testing dummy
-        MarkerBLE marker1 = new MarkerBLE(new LatLng(myCords.latitude+1,myCords.longitude+1),1,"Marker1");
-        markerHandler.addMarkerBLE(marker1);
+
     }
 
     private Location getDeviceLocation(){
