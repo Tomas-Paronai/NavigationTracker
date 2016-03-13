@@ -45,4 +45,14 @@
         android:src="@drawable/settings"
         android:onClick="openSettings"/>
 
+    <!-- DEBUG BUTTON -->
+    <android.support.design.widget.FloatingActionButton
+        style="@style/FabStyle"
+        android:id="@+id/fab_debug"
+        app:layout_anchor="@+id/map"
+        android:layout_toLeftOf="@+id/settings_fragment"
+        android:layout_alignBaseline="@+id/fab_resetcamera"
+        android:layout_below="@+id/fab_settings"
+        android:onClick="myClick"/>
+
 </RelativeLayout>

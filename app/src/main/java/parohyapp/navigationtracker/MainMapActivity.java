@@ -114,4 +114,9 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d("MarkerClick", marker.getTitle());
         return false;
     }
+
+    /*DEBUG BUTTON*/
+    public void myClick(View v){
+
+    }
 }
