@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/parent"
     android:clipChildren="false">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,11 +18,19 @@
         tools:layout="@layout/abc_action_bar_title_item" >
     </fragment>
 
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:name="parohyapp.navigationtracker.fragments.Settings"
+        tools:layout="@layout/settings_fragment_layout"
+        android:layout_alignParentRight="true"/>
+
     <android.support.design.widget.FloatingActionButton
         style="@style/FabStyle"
         android:id="@+id/fab_resetcamera"
         app:layout_anchor="@+id/map"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/settings_fragment"
         android:layout_alignParentTop="true"
         android:src="@drawable/reset_camera"
         android:onClick="resetCamera"/>
@@ -29,7 +39,8 @@
         style="@style/FabStyle"
         android:id="@+id/fab_settings"
         app:layout_anchor="@+id/map"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/settings_fragment"
+        android:layout_alignBaseline="@+id/fab_resetcamera"
         android:layout_below="@+id/fab_resetcamera"
         android:src="@drawable/settings"
         android:onClick="openSettings"/>
