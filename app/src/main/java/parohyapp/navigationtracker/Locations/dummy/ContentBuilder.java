@@ -1,5 +1,7 @@
 package parohyapp.navigationtracker.Locations.dummy;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,14 +18,11 @@ public class ContentBuilder {
     private List<ListItem> items;
     private Map<String, ListItem> itemMap;
 
-    private int currentBeaconId;
-
     private static final ContentBuilder INSTANCE = new ContentBuilder();
 
     private ContentBuilder() {
         items = new ArrayList<>();
         itemMap = new HashMap<>();
-        currentBeaconId = -1;
     }
 
     public static ContentBuilder getInstance() {
@@ -31,20 +30,18 @@ public class ContentBuilder {
     }
 
     public List<ListItem> getItems(int beaconId) {
-        if (beaconId == currentBeaconId) {
+        if (beaconId == 0) {
             return items;
         } else {
-            currentBeaconId = beaconId;
             loadItems(beaconId);
             return items;
         }
     }
 
     public Map<String, ListItem> getItemMap(int beaconId) {
-        if (beaconId == currentBeaconId) {
+        if (beaconId == 0) {
             return itemMap;
         } else {
-            currentBeaconId = beaconId;
             loadItems(beaconId);
             return itemMap;
         }
