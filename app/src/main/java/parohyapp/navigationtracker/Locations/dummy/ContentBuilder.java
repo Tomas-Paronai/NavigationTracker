@@ -1,6 +1,7 @@
 package parohyapp.navigationtracker.Locations.dummy;
 
-import android.util.Log;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 public class ContentBuilder {
 
+    private JSONObject beacons;
     private List<ListItem> items;
     private Map<String, ListItem> itemMap;
 
@@ -29,32 +31,33 @@ public class ContentBuilder {
         return INSTANCE;
     }
 
-    public List<ListItem> getItems(int beaconId) {
-        if (beaconId == 0) {
-            return items;
-        } else {
-            loadItems(beaconId);
-            return items;
-        }
+    public void setBeacons(JSONObject beacons) {
+        this.beacons = beacons;
     }
 
-    public Map<String, ListItem> getItemMap(int beaconId) {
-        if (beaconId == 0) {
-            return itemMap;
-        } else {
-            loadItems(beaconId);
-            return itemMap;
+    public List<ListItem> getItems() {
+        if (beacons != null) {
+            loadItems();
         }
+        return items;
     }
 
-    private void loadItems(int beaconId) {
-        /*
-         * Do some Volley magic
-         */
+    public Map<String, ListItem> getItemMap() {
+        if (beacons != null) {
+            loadItems();
+        }
+        return itemMap;
+    }
 
-        //TODO: temporary dummy data
-        for (int i = 1; i <= beaconId; i++) {
-            addItem(createDummyItem(i));
+    private void loadItems() {
+        items.clear();
+        itemMap.clear();
+        try {
+            for (int i = 0; i < beacons.length(); i++) {
+                addItem(createDummyItem(beacons.getJSONObject("location" + i)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -63,8 +66,8 @@ public class ContentBuilder {
         itemMap.put(item.id, item);
     }
 
-    private ListItem createDummyItem(int position) {
-        return new ListItem(String.valueOf(position), "Short description " + position, "Some bullshit.");
+    private ListItem createDummyItem(JSONObject location) throws JSONException {
+        return new ListItem(location.getString("name"), location.getString("shortDescription"), location.getString("description"));
     }
 
     public class ListItem {

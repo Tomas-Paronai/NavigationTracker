@@ -7,10 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import parohyapp.navigationtracker.R;
 
@@ -35,7 +39,7 @@ public class LocationListActivity extends AppCompatActivity {
     private boolean mTwoPane;
 
     private ContentBuilder cBuilder;
-    private int beaconId;
+    private JSONObject beacons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +47,19 @@ public class LocationListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_location_list);
 
         Intent intent = getIntent();
-        beaconId = intent.getIntExtra("beaconId", 0);
+        try {
+            String beaconsExtra = intent.getStringExtra("beacons");
+            Log.d("beacons", beaconsExtra);
+            beacons = new JSONObject(beaconsExtra);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            beacons = new JSONObject();
+        }
 
         setupToolbar();
 
         cBuilder = ContentBuilder.getInstance();
+        cBuilder.setBeacons(beacons);
 
         View recyclerView = findViewById(R.id.location_list);
         assert recyclerView != null;
@@ -71,7 +83,7 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(cBuilder.getItems(beaconId)));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(cBuilder.getItems()));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -93,7 +105,7 @@ public class LocationListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText("Location " + mValues.get(position).id); //TODO: fix this
+            holder.mIdView.setText(mValues.get(position).id); //TODO: fix this
             holder.mContentView.setText(mValues.get(position).content);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

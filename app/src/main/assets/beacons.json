@@ -1,0 +1,19 @@
+{
+  "C1:48:9A:1E:00:E5" : {
+    "location0" : {
+      "name" : "Test Beacon",
+      "shortDescription" : "Testing",
+      "description" : "This is a testing beacon given to us by our Android guru Miro."
+    },
+    "location1" : {
+      "name" : "Miklusova vaznica",
+      "shortDescription" : "Historicka budova",
+      "description" : "Miklusova vaznica je stara vaznica v ktorej sa vaznili vazni za cias starodavnych kosic."
+    },
+    "location2" : {
+      "name" : "Aupark",
+      "shortDescription" : "Nakupne stredisko",
+      "description" : "Je to velky obchodny dom v Kosiciach, su tam obchody."
+    }
+  }
+}
