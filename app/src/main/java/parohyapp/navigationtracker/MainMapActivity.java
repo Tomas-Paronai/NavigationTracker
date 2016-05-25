@@ -26,6 +26,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -98,9 +99,6 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         mMap = googleMap;
 
         markerHandler = new MarkerHandler(googleMap,getAssets());
-        //testing dummy
-        markerHandler.addMarkerBLE(new LatLng(-33.867, 151.206),"Sydney");
-
         Location myLocation = getDeviceLocation();
         if (myLocation != null) {
             updateMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
@@ -112,7 +110,7 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
             }
             //myMarker = mMap.addMarker(new MarkerOptions().position(myCords).title("You"));
 
-            myMarker = markerHandler.addMarkerBLE(myCords, "You");
+            myMarker = markerHandler.addMyPosition(myCords);
             mMap.moveCamera(CameraUpdateFactory.zoomTo(13.5f));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCords));
         }
@@ -133,7 +131,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         if (myMarker != null) {
             myMarker.remove();
         }
-        myMarker = markerHandler.addMarkerBLE(myCords, "You");
+
+        myMarker = markerHandler.addMyPosition(myCords);
     }
 
     @Override
@@ -174,22 +173,6 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         }
         intent.putExtra("beacons", locations.toString());
         startActivity(intent);
-    }
-
-    public String loadJSONFromAsset() {
-        String json;
-        try {
-            InputStream is = getAssets().open("beacons.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
     }
 
     /**

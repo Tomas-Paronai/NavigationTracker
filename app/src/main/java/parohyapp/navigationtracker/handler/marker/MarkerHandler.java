@@ -3,6 +3,8 @@ package parohyapp.navigationtracker.handler.marker;
 import android.content.res.AssetManager;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -13,6 +15,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import parohyapp.navigationtracker.R;
 
 /**
  * Created by tomas on 3/13/2016.
@@ -27,6 +31,7 @@ public class MarkerHandler {
         googleMap = gMap;
         markers = new ArrayList<>();
         this.assetManager = assetManager;
+        loadBeaconMarkers();
     }
 
     public boolean removeMarker(int id){
@@ -71,7 +76,7 @@ public class MarkerHandler {
 
     public Marker addMarkerBLE(LatLng position, String title){
         if(googleMap != null){
-            Marker mapMarker = googleMap.addMarker(new MarkerOptions().position(position).title(title)); //insert marker in map and return its instance
+            Marker mapMarker = googleMap.addMarker(new MarkerOptions().position(position).title(title).icon(BitmapDescriptorFactory.fromResource(R.drawable.beacon))); //insert marker in map and return its instance
             AppMarker marker = new AppMarker(position,title); //create an instace of AppMarker
             marker.setMarker(mapMarker); //mapMarker reference added to AppMarker
             markers.add(marker); //AppMarker stored in array
@@ -80,12 +85,20 @@ public class MarkerHandler {
         return null;
     }
 
+    public Marker addMyPosition(LatLng position){
+        if(googleMap != null){
+            Marker mapMarker = googleMap.addMarker(new MarkerOptions().position(position).title("You").icon(BitmapDescriptorFactory.fromResource(R.drawable.person)));
+            return mapMarker;
+        }
+        return null;
+    }
 
     public void loadBeaconMarkers(){
         try {
             JSONObject config = new JSONObject(loadJSONFromAsset()).getJSONObject("C1:48:9A:1E:00:E5").getJSONObject("config");
-            long longitude = config.getLong("longitude");
-            long latitude = config.getLong("latitude");
+            double longitude = config.getDouble("longitude");
+            double latitude = config.getDouble("latitude");
+            addMarkerBLE(new LatLng(latitude,longitude),"Beacon");
         } catch (JSONException e) {
             e.printStackTrace();
         }
