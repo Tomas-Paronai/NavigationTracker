@@ -1,19 +1,23 @@
 {
   "C1:48:9A:1E:00:E5" : {
+    "config" : {
+      "latitude" : "48.722078",
+      "longitude" : "21.257603"
+    },
     "location0" : {
-      "name" : "Test Beacon",
-      "shortDescription" : "Testing",
-      "description" : "This is a testing beacon given to us by our Android guru Miro."
+      "name" : "Levočský dom",
+      "shortDescription" : "Najstaršie pohostinstvo",
+      "description" : "Levočský dom v Košiciach je najstarším dodnes fungujúcim pohostinstvom na Slovensku a jednou z najstarších stavieb svojho druhu v Európe. Postavili ho v 15. storočí a dlhú dobu bol majetkom Levoče, ktorej ho odkázal jeden z jeho majiteľov, levočský rodák Alexius Thurzo. Hostinec si vďaka vysokej úrovni poskytovaných služieb vybudoval veľmi dobré meno a stal sa vyhľadávaným podnikom najvyššej uhorskej smotánky. Budova Levočského domu je dnes národnou kultúrnou pamiatkou. "
     },
     "location1" : {
-      "name" : "Miklusova vaznica",
-      "shortDescription" : "Historicka budova",
-      "description" : "Miklusova vaznica je stara vaznica v ktorej sa vaznili vazni za cias starodavnych kosic."
+      "name" : "Miklušova väznica",
+      "shortDescription" : "Historická budova",
+      "description" : "Miklušova väznica je stará väznica v ktorej sa väznili väzni za čias starodávnych Košíc."
     },
     "location2" : {
-      "name" : "Aupark",
-      "shortDescription" : "Nakupne stredisko",
-      "description" : "Je to velky obchodny dom v Kosiciach, su tam obchody."
+      "name" : "Štátne divadlo Košice",
+      "shortDescription" : "Košické divadlo",
+      "description" : "Je to štátne divadlo so sídlo v Košiciach. Konajú sa tam pravidelné divadelné podujatia"
     }
   }
 }
