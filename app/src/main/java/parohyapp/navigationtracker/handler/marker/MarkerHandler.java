@@ -1,10 +1,17 @@
 package parohyapp.navigationtracker.handler.marker;
 
+import android.content.res.AssetManager;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -13,11 +20,13 @@ import java.util.ArrayList;
 public class MarkerHandler {
 
     private GoogleMap googleMap;
+    private AssetManager assetManager;
     private ArrayList<AppMarker> markers;
 
-    public MarkerHandler(GoogleMap gMap){
+    public MarkerHandler(GoogleMap gMap, AssetManager assetManager){
         googleMap = gMap;
         markers = new ArrayList<>();
+        this.assetManager = assetManager;
     }
 
     public boolean removeMarker(int id){
@@ -60,7 +69,7 @@ public class MarkerHandler {
         return null;
     }
 
-    public Marker addMarker(LatLng position, String title){
+    public Marker addMarkerBLE(LatLng position, String title){
         if(googleMap != null){
             Marker mapMarker = googleMap.addMarker(new MarkerOptions().position(position).title(title)); //insert marker in map and return its instance
             AppMarker marker = new AppMarker(position,title); //create an instace of AppMarker
@@ -71,4 +80,30 @@ public class MarkerHandler {
         return null;
     }
 
+
+    public void loadBeaconMarkers(){
+        try {
+            JSONObject config = new JSONObject(loadJSONFromAsset()).getJSONObject("C1:48:9A:1E:00:E5").getJSONObject("config");
+            long longitude = config.getLong("longitude");
+            long latitude = config.getLong("latitude");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String loadJSONFromAsset() {
+        String json;
+        try {
+            InputStream is = assetManager.open("beacons.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
 }

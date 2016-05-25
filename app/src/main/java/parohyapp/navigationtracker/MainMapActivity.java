@@ -62,6 +62,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     private Set<String> nearbyBeacons;
     private Map<String, Integer> beaconDestroy;
 
+    private ScanCallback mScanCallback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +97,9 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        markerHandler = new MarkerHandler(googleMap);
+        markerHandler = new MarkerHandler(googleMap,getAssets());
+        //testing dummy
+        markerHandler.addMarkerBLE(new LatLng(-33.867, 151.206),"Sydney");
 
         Location myLocation = getDeviceLocation();
         if (myLocation != null) {
@@ -108,13 +112,9 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
             }
             //myMarker = mMap.addMarker(new MarkerOptions().position(myCords).title("You"));
 
-            myMarker = markerHandler.addMarker(myCords, "You");
+            myMarker = markerHandler.addMarkerBLE(myCords, "You");
             mMap.moveCamera(CameraUpdateFactory.zoomTo(13.5f));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCords));
-
-            //testing dummy
-            MarkerBLE marker1 = new MarkerBLE(new LatLng(myCords.latitude + 1, myCords.longitude + 1), 1, "Marker1");
-            markerHandler.addMarkerBLE(marker1);
         }
     }
 
@@ -133,7 +133,7 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         if (myMarker != null) {
             myMarker.remove();
         }
-        myMarker = markerHandler.addMarker(myCords, "You");
+        myMarker = markerHandler.addMarkerBLE(myCords, "You");
     }
 
     @Override
@@ -166,7 +166,7 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         JSONObject beacons;
         JSONObject locations;
         try {
-            beacons = new JSONObject(loadJSONFromAsset());
+            beacons = new JSONObject(markerHandler.loadJSONFromAsset());
             locations = beacons.getJSONObject("C1:48:9A:1E:00:E5");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -212,8 +212,13 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         public BeaconChecker() {
             handler = new Handler();
 
-            BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-            bluetoothAdapter = btManager.getAdapter();
+            /*BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            if(Build.VERSION.SDK_INT >= 21){
+                bluetoothAdapter = btManager.getAdapter();
+            }
+            else{
+                bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            }*/
         }
 
         public void onResume() {
@@ -222,13 +227,57 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
                 startActivityForResult(enableIntent, 1);
             } else {
                 if (Build.VERSION.SDK_INT >= 21) {
+                    //initCallBack();
                     leScanner = bluetoothAdapter.getBluetoothLeScanner();
                     settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED).build();
                     filters = new ArrayList<>();
+                    scanLeDevices(true);
                 }
-                scanLeDevices(true);
             }
         }
+
+        /*private void initCallBack(){
+            mScanCallback = new ScanCallback() {
+                @Override
+                public void onScanResult(int callbackType, ScanResult result) {
+                    String beaconID = String.valueOf(result.getDevice());
+                    Log.d("device ID", beaconID);
+                    if (beaconID != null) {
+                        if (nearbyBeacons.add(beaconID)) {
+                            Toast.makeText(MainMapActivity.this, "You are near beacon id: " + beaconID, Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(MainMapActivity.this, LocationListActivity.class);
+                            JSONObject beacons;
+                            JSONObject locations;
+                            try {
+                                beacons = new JSONObject(loadJSONFromAsset());
+                                locations = beacons.getJSONObject(beaconID);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                locations = new JSONObject();
+                            }
+                            intent.putExtra("beacons", locations.toString());
+                            startActivity(intent);
+                        }
+                        beaconDestroy.put(beaconID, 15);
+                    }
+
+                    checkBeacons();
+                    scanLeDevices(true);
+                }
+
+                @Override
+                public void onBatchScanResults(List<ScanResult> results) {
+                    for (ScanResult sr : results) {
+                        Log.i("ScanResult-Results", sr.toString());
+                    }
+                }
+
+                @Override
+                public void onScanFailed(int errorCode) {
+                    //Log.e("Scan failed", errorCode + "");
+                }
+            };
+        }*/
 
         public void onPause() {
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
@@ -266,46 +315,7 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
             }
         }
 
-        private ScanCallback mScanCallback = new ScanCallback() {
-            @Override
-            public void onScanResult(int callbackType, ScanResult result) {
-                String beaconID = String.valueOf(result.getDevice());
-                Log.d("device ID", beaconID);
-                if (beaconID != null) {
-                    if (nearbyBeacons.add(beaconID)) {
-                        Toast.makeText(MainMapActivity.this, "You are near beacon id: " + beaconID, Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(MainMapActivity.this, LocationListActivity.class);
-                        JSONObject beacons;
-                        JSONObject locations;
-                        try {
-                            beacons = new JSONObject(loadJSONFromAsset());
-                            locations = beacons.getJSONObject(beaconID);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            locations = new JSONObject();
-                        }
-                        intent.putExtra("beacons", locations.toString());
-                        startActivity(intent);
-                    }
-                    beaconDestroy.put(beaconID, 15);
-                }
 
-                checkBeacons();
-                scanLeDevices(true);
-            }
-
-            @Override
-            public void onBatchScanResults(List<ScanResult> results) {
-                for (ScanResult sr : results) {
-                    Log.i("ScanResult-Results", sr.toString());
-                }
-            }
-
-            @Override
-            public void onScanFailed(int errorCode) {
-                //Log.e("Scan failed", errorCode + "");
-            }
-        };
 
         private void checkBeacons() {
             for (String beaconID : nearbyBeacons) {
